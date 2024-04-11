@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Selection and Display</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .left-panel {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto; /* 内容超出时显示垂直滚动条 */
+        }
+        .right-panel {
+            width: 30%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto; /* 内容超出时显示垂直滚动条 */
+        }
+        .group {
+            margin-bottom: 20px;
+        }
+        .group div {
+            margin-bottom: 10px;
+        }
+        .group img {
+            width: 50px;
+            /* height: 50px; */
+            margin-right: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        .group img.selected {
+            border-color: red;
+        }
+        .actions button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+
+        {% for body_com in body_com_list %}
+        <!-- [['头', "head", ['27_head.png', '19_head.png', 'head.png', '31_head.png', '30_head.png']]] -->
+            {% set group_title = body_com[0] %}
+            {% set group_id = body_com[1] %}
+            <div class="group" id="{{ group_id }}">
+                <div style="font-size: 30px;" >{{ group_title }}</div> 
+
+                {% for png_filename in body_com[2] %}
+                    {% set png_file_url = body_com_url_pre + '/' +  body_com[0] + '/' + png_filename %}
+                    <img src="{{ png_file_url  }}" alt="Option 1" data-value="{{ png_filename }}" onclick="selectImage('{{ group_id }}', this)">
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <!-- <div class="actions"> -->
+            <!-- <button onclick="submitSelection()">提交</button><br><br> -->
+            <!-- <button>保存</button> -->
+        <!-- </div> -->
+
+        <br><br>
+    </div>
+    <div class="right-panel">
+        <img id="displayedImage" src="static/img/test.png" alt="Displayed Image" style="max-width: 100%; max-height: 100%;">
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        // 默认选中每组的第一个图片
+        document.querySelectorAll('.group').forEach(group => {
+            const firstImage = group.querySelector('img');
+            if (firstImage) {
+                firstImage.classList.add('selected');
+            }
+        });
+    };
+
+    function selectImage(groupID, selectedImage) {
+        const group = document.getElementById(groupID);
+        group.querySelectorAll('img').forEach(img => {
+            img.classList.remove('selected');
+        });
+        selectedImage.classList.add('selected');
+
+        submitSelection()   // 改变选择就提交到服务端
+    }
+
+    function submitSelection() {
+        const selectedOptions = {};
+        document.querySelectorAll('.group').forEach(group => {
+            const selectedImage = group.querySelector('img.selected');
+            if (selectedImage) {
+                selectedOptions[group.id] = selectedImage.getAttribute('data-value');
+            }
+        });
+
+        // window.alert(selectedOptions["group1"])
+
+        fetch('/merge', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(selectedOptions),
+        })
+        .then(response => response.text()) // 使用response.text()而不是response.json()
+        .then(data => {
+            console.log('Success:', data);
+            // 要强制刷新 "displayedImage" 的内容，在url中添加一个基于时间的查询字符串。浏览器都会认为这是一个全新的URL，从而绕过缓存并重新加载图片
+            var new_url = data + '?timestamp=' + new Date().getTime();  // 为URL添加一个基于当前时间的唯一查询参数. 
+            document.getElementById('displayedImage').src = new_url;    // 直接使用返回的字符串作为新图片的URL
+
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

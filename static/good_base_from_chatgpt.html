@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Layout Page</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .container {
+        display: flex;
+        height: 100%;
+    }
+    .left-panel {
+        width: 70%;
+        padding: 20px;
+    }
+    .right-panel {
+        width: 30%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    .group {
+        margin-bottom: 20px;
+    }
+    .group img {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+        border: 2px solid transparent;
+    }
+    .group img.selected {
+        border-color: red;
+    }
+    .actions {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+        <div class="group" id="group1">
+            <div>Group 1 Title</div>
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 1" onclick="selectImage('group1', this)">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 2" onclick="selectImage('group1', this)">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 3" onclick="selectImage('group1', this)">
+        </div>
+        <div class="group" id="group2">
+            <div>Group 2 Title</div>
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 1" onclick="selectImage('group2', this)">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 2" onclick="selectImage('group2', this)">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Option 3" onclick="selectImage('group2', this)">
+        </div>
+        <div class="actions">
+            <button onclick="submitSelection()">提交</button>
+            <button>保存</button>
+        </div>
+    </div>
+    <div class="right-panel">
+        <img id="displayedImage" src="http://127.0.0.1:8000/static/img/girl.png" alt="Displayed Image">
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        document.querySelectorAll('.group img').forEach(img => {
+            if (img === img.parentNode.firstElementChild.nextElementSibling) {
+                img.classList.add('selected');
+            }
+        });
+    };
+
+    function selectImage(groupID, selectedImage) {
+        const group = document.getElementById(groupID);
+        group.querySelectorAll('img').forEach(img => {
+            img.classList.remove('selected');
+        });
+        selectedImage.classList.add('selected');
+    }
+
+    function submitSelection() {
+        // 模拟提交选中的图片，并获取新图片的URL
+        const imageUrl = "http://127.0.0.1:8000/static/img/girl1.png"; // 在实际应用中，这个URL应从服务器端获取
+        document.getElementById('displayedImage').src = imageUrl;
+    }
+</script>
+
+</body>
+</html>

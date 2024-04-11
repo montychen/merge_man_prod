@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .image-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .image-checkbox {
+            cursor: pointer;
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+        .image-checkbox input[type="radio"] {
+            display: none;
+        }
+        .image-checkbox img {
+            width: 100%;
+            height: 100%;
+        }
+        .image-checkbox label::before {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            top: -2px;
+            left: -2px;
+            transition: all 0.3s ease;
+        }
+        .image-checkbox input[type="radio"]:checked + label::before {
+            border-color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="image-container">
+    <div class="image-checkbox">
+        <input type="radio" id="img1_group1" name="group1" value="1" checked>
+        <label for="img1_group1">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 1 Image 1">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img2_group1" name="group1" value="2">
+        <label for="img2_group1">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 1 Image 2">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img3_group1" name="group1" value="3">
+        <label for="img3_group1">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 1 Image 3">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img4_group1" name="group1" value="4">
+        <label for="img4_group1">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 1 Image 4">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img5_group1" name="group1" value="5">
+        <label for="img5_group1">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 1 Image 5">
+        </label>
+    </div>
+</div>
+
+<div class="image-container">
+    <div class="image-checkbox">
+        <input type="radio" id="img1_group2" name="group2" value="1">
+        <label for="img1_group2">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 2 Image 1">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img2_group2" name="group2" value="2">
+        <label for="img2_group2">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 2 Image 2">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img3_group2" name="group2" value="3">
+        <label for="img3_group2">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 2 Image 3">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img4_group2" name="group2" value="4">
+        <label for="img4_group2">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 2 Image 4">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img5_group2" name="group2" value="5">
+        <label for="img5_group2">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 2 Image 5">
+        </label>
+    </div>
+</div>
+
+<div class="image-container">
+    <div class="image-checkbox">
+        <input type="radio" id="img1_group3" name="group3" value="1">
+        <label for="img1_group3">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 3 Image 1">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img2_group3" name="group3" value="2">
+        <label for="img2_group3">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 3 Image 2">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img3_group3" name="group3" value="3">
+        <label for="img3_group3">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 3 Image 3">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img4_group3" name="group3" value="4">
+        <label for="img4_group3">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 3 Image 4">
+        </label>
+    </div>
+    <div class="image-checkbox">
+        <input type="radio" id="img5_group3" name="group3" value="5">
+        <label for="img5_group3">
+            <img src="http://127.0.0.1:8000/static/res/头/19_head.png" alt="Group 3 Image 5">
+        </label>
+    </div>
+</div>
+
+<form action="http://127.0.0.1:8000/merge" method="POST">
+    <!-- Here we could add JavaScript code to handle form submission with selected image data -->
+    <!-- However, since it's not specified how to handle which image is selected, this part is omitted -->
+    <button type="submit">提交选择</button>
+</form>
+
+</body>
+</html>
