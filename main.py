@@ -166,8 +166,8 @@ def left_hand_top_pos(images):
     hand_weight = images["left_hand"].size[0]
     body_weight, body_height = images["body"].size
 
-    LEFT_HAND_INTO_BODY_PERCENT_X = 46  # 左手进入身体百分比
-    LEFT_HAND_INTO_BODY_PERCENT_Y = 16  
+    LEFT_HAND_INTO_BODY_PERCENT_X = 45  # 左手进入身体百分比
+    LEFT_HAND_INTO_BODY_PERCENT_Y = 18  
 
     LEFT_HAND_INTO_BODY_X = round(body_weight * LEFT_HAND_INTO_BODY_PERCENT_X / 100)   # 75
     LEFT_HAND_INTO_BODY_Y = round(body_height * LEFT_HAND_INTO_BODY_PERCENT_Y / 100)   # 38
@@ -203,7 +203,7 @@ def left_leg_pos(images):  # 还要添加代码：保证 腿不能比半个身�
     left_leg_y = body_y + LEFT_LEG_INTO_BODY_Y
     return left_leg_x, left_leg_y
 
-def right_leg_pos(images):  # # 还要添加代码：保证 腿不能比半个身体大。
+def right_leg_pos(images):   # 还要添加代码：保证 腿不能比半个身体大。
     body_x, body_y = body_left_top_pos(images)
     body_width, body_height = images["body"].size
     leg_width, leg_height = images["right_leg"].size
@@ -250,8 +250,6 @@ def merge_man(images, have_hair = True, have_left_leg = True):   # pil 坐标的
 
     if have_hair: 
         result_image.paste(resize_hair(images), hair_top_pos(images), mask=resize_hair(images))  # 头发
-        # result_image.paste(images['hair'], hair_top_pos(images), mask=images['hair'])  # 头发
-
 
     result_image.paste(images['right_hand'], right_hand_top_pos(images), mask=images['right_hand'])  # 右手
 
