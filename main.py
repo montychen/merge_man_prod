@@ -169,10 +169,8 @@ def left_hand_top_pos(images):
     LEFT_HAND_INTO_BODY_PERCENT_X = 46  # 左手进入身体百分比
     LEFT_HAND_INTO_BODY_PERCENT_Y = 16  
 
-
     LEFT_HAND_INTO_BODY_X = round(body_weight * LEFT_HAND_INTO_BODY_PERCENT_X / 100)   # 75
     LEFT_HAND_INTO_BODY_Y = round(body_height * LEFT_HAND_INTO_BODY_PERCENT_Y / 100)   # 38
-
 
     left_hand_x = body_x - hand_weight + LEFT_HAND_INTO_BODY_X
     left_hand_y = body_y + LEFT_HAND_INTO_BODY_Y
@@ -189,24 +187,36 @@ def right_hand_top_pos(images):
     right_hand_y = body_y + RIGHT_HAND_INTO_BODY_Y
     return right_hand_x, right_hand_y
 
-def left_leg_pos(images):
-    LEFT_LEG_INTO_BODY_X = 20
-    LEFT_LEG_INTO_BODY_Y = 90
-
+def left_leg_pos(images):  # 还要添加代码：保证 腿不能比半个身体大。
     body_x, body_y = body_left_top_pos(images)
+    body_width, body_height = images["body"].size
+    leg_width, leg_height = images["left_leg"].size
 
-    left_leg_x = body_x + LEFT_LEG_INTO_BODY_X
-    left_leg_y = body_y + images["body"].size[1] - LEFT_LEG_INTO_BODY_Y
+    LEG_RIGHT_SHIFT_BODY_PERCENT_X = 9
+    LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y = 50 
+    LEFT_LEG_INTO_BODY_X = round(body_width * LEG_RIGHT_SHIFT_BODY_PERCENT_X / 100) # 20
+    LEFT_LEG_INTO_BODY_Y = round(0.5 * body_height + 0.5 * body_height * LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y / 100)   # 从身体中间 往下移 身体一半的百分之几 
+
+    delta_x = round((0.5 * body_width - leg_width)/2)    # 左腿比 一半身体 小多少
+
+    left_leg_x = body_x + LEFT_LEG_INTO_BODY_X  + delta_x
+    left_leg_y = body_y + LEFT_LEG_INTO_BODY_Y
     return left_leg_x, left_leg_y
 
-def right_leg_pos(images):
-    RIGHT_LEG_INTO_BODY_X = 80
-    RIGHT_LEG_INTO_BODY_Y = 90
-
+def right_leg_pos(images):  # # 还要添加代码：保证 腿不能比半个身体大。
     body_x, body_y = body_left_top_pos(images)
+    body_width, body_height = images["body"].size
+    leg_width, leg_height = images["right_leg"].size
 
-    right_leg_x = body_x + images["body"].size[0] - RIGHT_LEG_INTO_BODY_X
-    right_leg_y = body_y + images["body"].size[1] - RIGHT_LEG_INTO_BODY_Y
+    LEG_LEFT_SHIFT_BODY_PERCENT_X = 1
+    LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y = 50 
+    RIGHT_LEG_INTO_BODY_X = round(body_width * LEG_LEFT_SHIFT_BODY_PERCENT_X / 100) # 20
+    RIGHT_LEG_INTO_BODY_Y = round(0.5 * body_height + 0.5 * body_height * LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y / 100)   # 从身体中间 往下移 身体一半的百分之几 
+
+    delta_x = round((0.5 * body_width - leg_width)/2)    # 右腿比 一半身体 小多少
+
+    right_leg_x = body_x + body_width - RIGHT_LEG_INTO_BODY_X - delta_x - leg_width
+    right_leg_y = body_y + RIGHT_LEG_INTO_BODY_Y
     return right_leg_x, right_leg_y
 
 
@@ -216,7 +226,7 @@ def resize_img(img, factor = 2.0):  # 放大图片，默认放大2倍
 
 
 
-def merge_man(images, have_hair = True, have_right_leg = True):   # pil 坐标的原点在 左上角
+def merge_man(images, have_hair = True, have_left_leg = True):   # pil 坐标的原点在 左上角
     man_width, man_height = result_man_width_height(images)
 
     # 创建一个新的图像，背景透明
@@ -224,12 +234,11 @@ def merge_man(images, have_hair = True, have_right_leg = True):   # pil 坐标�
 
    
     result_image.paste(images['left_leg'], left_leg_pos(images), mask=images['left_leg'])  # 左脚
-    if have_right_leg: 
-        result_image.paste(images['right_leg'], right_leg_pos(images), mask=images['right_leg'])  # 右脚
+    result_image.paste(images['right_leg'], right_leg_pos(images), mask=images['right_leg'])  # 右脚
+
 
     
     result_image.paste(images['left_hand'], left_hand_top_pos(images), mask=images['left_hand'])  # 左手
-
     result_image.paste(images['body'], body_left_top_pos(images), mask=images['body'])  # 身体
     result_image.paste(images['head'], head_left_top_pos(images), mask=images['head'])  # 头
 
@@ -255,7 +264,7 @@ def merge_man(images, have_hair = True, have_right_leg = True):   # pil 坐标�
 def merge(body_com: Body_Component):
     print(f"\n{body_com}\n")
     selected_images = get_selected_img(body_com)
-    merge_man(selected_images, have_hair=body_com.hair != "0_NO.png", have_right_leg=body_com.right_leg != "0_NO.png")
+    merge_man(selected_images, have_hair=body_com.hair != "0_NO.png", have_left_leg=body_com.left_leg != "0_NO.png")
     return "static/result_image.png"
 
 
