@@ -128,7 +128,7 @@ def expression_left_top_pos(images):  # pil 坐标的原点在 左上角
     head_center_x, head_center_y = (head_x + head_width//2, head_y + head_height // 2)
 
     EXPRESSION_INTO_FACE_X = -15
-    EXPRESSION_INTO_FACE_Y = 25
+    EXPRESSION_INTO_FACE_Y = 35
 
     new_expression_img = expression_adapt_to_width_of_head(images)
 
@@ -263,7 +263,7 @@ def merge_man(images, have_hair = True, have_left_leg = True):   # pil 坐标的
 
     # 默认提供的表情图片太小，先放大
     # result_image.paste(images['expression'], expression_left_top_pos(images), mask=images['expression'])  # 表情
-    # result_image.paste(expression_adapt_to_width_of_head(images), expression_left_top_pos(images), mask=expression_adapt_to_width_of_head(images))  # 表情
+    result_image.paste(expression_adapt_to_width_of_head(images), expression_left_top_pos(images), mask=expression_adapt_to_width_of_head(images))  # 表情
 
     if have_hair: 
         result_image.paste(resize_hair(images), hair_top_pos(images), mask=resize_hair(images))  # 头发
