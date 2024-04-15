@@ -166,7 +166,7 @@ def left_hand_top_pos(images):
     hand_weight = images["left_hand"].size[0]
     body_weight, body_height = images["body"].size
 
-    LEFT_HAND_INTO_BODY_PERCENT_X = 45  # 左手进入身体百分比
+    LEFT_HAND_INTO_BODY_PERCENT_X = 43  # 左手进入身体百分比
     LEFT_HAND_INTO_BODY_PERCENT_Y = 18  
 
     LEFT_HAND_INTO_BODY_X = round(body_weight * LEFT_HAND_INTO_BODY_PERCENT_X / 100)   # 75
@@ -177,7 +177,7 @@ def left_hand_top_pos(images):
     return left_hand_x, left_hand_y
 
 def right_hand_top_pos(images):
-    RIGHT_HAND_INTO_BODY_X = -25   #  500
+    RIGHT_HAND_INTO_BODY_X = -30   #  500
     RIGHT_HAND_INTO_BODY_Y = 45    # 350
 
     body_x, body_y = body_left_top_pos(images)
@@ -187,26 +187,44 @@ def right_hand_top_pos(images):
     right_hand_y = body_y + RIGHT_HAND_INTO_BODY_Y
     return right_hand_x, right_hand_y
 
-def left_leg_pos(images):  # 还要添加代码：保证 腿不能比半个身体大。
+def leg_weight_percent_half_body_weight(images, is_left_leg=True, percent = 95):  # 默认是半个身体宽带的 90%
+    body_width, body_height = images["body"].size
+    leg_img = images["left_leg"] if  is_left_leg else images["right_leg"]
+
+    if images["left_leg"].size[0] > (body_width * percent/100) // 2 or images["right_leg"].size[0] > (body_width * percent/100) // 2 :  # 左脚或右脚 大于一半身体
+        return resize_img(leg_img, percent/100)   # 左脚或右脚 都缩小 percent
+    else:
+        return leg_img
+
+    # new_leg_width = 0.5 * body_width * percent / 100
+    # new_leg = resize_img(leg_img, new_leg_width/leg_width)
+    # print("=====\t is_left_leg", is_left_leg, "\t", new_leg_width, "\t====", leg_width)
+
+
+def left_leg_pos(images, resize_leg_to_half_body_percent=False):  # 还要添加代码：保证 腿不能比半个身体大。
     body_x, body_y = body_left_top_pos(images)
     body_width, body_height = images["body"].size
-    leg_width, leg_height = images["left_leg"].size
+    leg_img = leg_weight_percent_half_body_weight(images, is_left_leg=True) if resize_leg_to_half_body_percent else images["left_leg"] 
 
-    LEG_RIGHT_SHIFT_BODY_PERCENT_X = 9
+    LEG_RIGHT_SHIFT_BODY_PERCENT_X = 10
     LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y = 50 
     LEFT_LEG_INTO_BODY_X = round(body_width * LEG_RIGHT_SHIFT_BODY_PERCENT_X / 100) # 20
     LEFT_LEG_INTO_BODY_Y = round(0.5 * body_height + 0.5 * body_height * LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y / 100)   # 从身体中间 往下移 身体一半的百分之几 
 
-    delta_x = round((0.5 * body_width - leg_width)/2)    # 左腿比 一半身体 小多少
+    # delta_x = round((0.5 * body_width - leg_img.size[0])/2)    # 左腿比 一半身体 小多少
+    delta_x = round((0.5 * body_width - leg_img.size[0])/2/2)    # 左腿比 一半身体 小多少
+
 
     left_leg_x = body_x + LEFT_LEG_INTO_BODY_X  + delta_x
     left_leg_y = body_y + LEFT_LEG_INTO_BODY_Y
     return left_leg_x, left_leg_y
 
-def right_leg_pos(images):   # 还要添加代码：保证 腿不能比半个身体大。
+def right_leg_pos(images, resize_leg_to_half_body_percent=False):   # 还要添加代码：保证 腿不能比半个身体大。
     body_x, body_y = body_left_top_pos(images)
     body_width, body_height = images["body"].size
-    leg_width, leg_height = images["right_leg"].size
+
+    leg_img = leg_weight_percent_half_body_weight(images, is_left_leg=False) if resize_leg_to_half_body_percent else images["right_leg"] 
+    leg_width, leg_height = leg_img .size
 
     LEG_LEFT_SHIFT_BODY_PERCENT_X = 1
     LEG_DOWN_SHIFT_BODY_CENTER_PERCENT_Y = 50 
@@ -233,11 +251,12 @@ def merge_man(images, have_hair = True, have_left_leg = True):   # pil 坐标的
     result_image = Image.new('RGBA', (man_width, man_height))
 
    
-    result_image.paste(images['left_leg'], left_leg_pos(images), mask=images['left_leg'])  # 左脚
-    result_image.paste(images['right_leg'], right_leg_pos(images), mask=images['right_leg'])  # 右脚
+    result_image.paste(leg_weight_percent_half_body_weight(images, is_left_leg=True), left_leg_pos(images, True), mask=leg_weight_percent_half_body_weight(images, is_left_leg=True))  # 左脚
+    # result_image.paste(images['left_leg'], left_leg_pos(images), mask=images['left_leg'])  # 左脚
 
+    result_image.paste(leg_weight_percent_half_body_weight(images, is_left_leg=False), right_leg_pos(images, True), mask=leg_weight_percent_half_body_weight(images, is_left_leg=False))  # 右脚
+    # result_image.paste(images['right_leg'], right_leg_pos(images), mask=images['right_leg'])  # 右脚
 
-    
     result_image.paste(images['left_hand'], left_hand_top_pos(images), mask=images['left_hand'])  # 左手
     result_image.paste(images['body'], body_left_top_pos(images), mask=images['body'])  # 身体
     result_image.paste(images['head'], head_left_top_pos(images), mask=images['head'])  # 头
@@ -245,8 +264,6 @@ def merge_man(images, have_hair = True, have_left_leg = True):   # pil 坐标的
     # 默认提供的表情图片太小，先放大
     # result_image.paste(images['expression'], expression_left_top_pos(images), mask=images['expression'])  # 表情
     # result_image.paste(expression_adapt_to_width_of_head(images), expression_left_top_pos(images), mask=expression_adapt_to_width_of_head(images))  # 表情
-
-
 
     if have_hair: 
         result_image.paste(resize_hair(images), hair_top_pos(images), mask=resize_hair(images))  # 头发
