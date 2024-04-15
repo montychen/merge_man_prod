@@ -96,7 +96,7 @@ def result_man_width_height(images):
 
 HEAD_SHIFT_DOWN = 20 # 头下移，预留位置给头发
 # HAIR_LARGER_THAN_HEAD = 0.06 # 头发比头大 10%
-HAIR_LARGER_THAN_HEAD = 0.22 # 头发比头大 10%
+HAIR_LARGER_THAN_HEAD =  0.22 # 头发比头大 10%
 
 # 先确定头的位置， 后续身体部件的位置，都是以头的位置作为参考
 def head_left_top_pos(images):       # pil 坐标的原点在 左上角
